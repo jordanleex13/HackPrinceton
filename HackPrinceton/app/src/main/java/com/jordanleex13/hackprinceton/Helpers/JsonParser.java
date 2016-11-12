@@ -50,7 +50,7 @@ public class JsonParser {
            for(int i=0; i < jsonArray.length(); i++){
                JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-               String id = jsonObject.optString("id");
+               int id = jsonObject.optString("id");
                String title = jsonObject.optString("title");
                String date = jsonObject.optString("datetime_local");
                String ticket_url = jsonObject.optString("url");
