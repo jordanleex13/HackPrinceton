@@ -11,6 +11,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,7 +46,15 @@ public class RunnableParseJson implements Runnable {
 
     public void httpGet(String searchTerm) throws IOException, JSONException {
 
-        String in = "https://api.seatgeek.com/2/events/3315199";
+        searchTerm = "sports";
+        String ipAddress = Utils.getIPAddress(true);
+        String in;
+        if (!ipAddress.isEmpty()) {
+            in = "https://api.seatgeek.com/2/events?taxonomies.name=" + searchTerm + "&per_page=40&geoip=" + ipAddress + "&range=40mi";
+        } else {
+            in = "https://api.seatgeek.com/2/events?taxonomies.name=" + searchTerm + "&per_page=40";
+        }
+        //in += searchTerm;
 
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response = httpclient.execute(new HttpGet(in));
@@ -62,46 +71,43 @@ public class RunnableParseJson implements Runnable {
 
             JSONObject reader = new JSONObject(responseString);
 
-            String id = reader.getString("id");
-            System.out.println(id);
+            JSONArray eventsArray = reader.optJSONArray("events");
 
-            String title = reader.getString("title");
-            String score = reader.getString("score");
-            String url = reader.getString("url");
-            String dateTimeLocal = reader.getString("datetime_local");
+            if (eventsArray != null) {
 
-            JSONObject venue = reader.getJSONObject("venue");
+                Log.e(TAG, String.valueOf(eventsArray.length()));
+                for (int i = 0; i < eventsArray.length(); i++) {
+                    JSONObject curr = eventsArray.getJSONObject(i);
 
-            if (venue != null) {
-                String city = venue.getString("city");
 
-                JSONObject location = venue.getJSONObject("location");
-                String lat = location.getString("lat");
-                String lon = location.getString("lon");
-                String locationArr[] = {lat,lon};
-                String address = venue.getString("address");
+                    String id = curr.getString("id");
+                    System.out.println(id);
 
-                Event newEvent = new Event(title, dateTimeLocal, url, score, city, locationArr, address);
-                EventManager.addEvent(newEvent);
-            } else {
-                Log.w(TAG, "Could not get venue or location data");
+                    String title = curr.getString("title");
+                    String score = curr.getString("score");
+                    String url = curr.getString("url");
+                    String dateTimeLocal = curr.getString("datetime_local");
+
+                    JSONObject venue = curr.getJSONObject("venue");
+
+                    if (venue != null) {
+                        String city = venue.getString("city");
+
+                        JSONObject location = venue.getJSONObject("location");
+                        String lat = location.getString("lat");
+                        String lon = location.getString("lon");
+                        String locationArr[] = {lat,lon};
+                        String address = venue.getString("address");
+
+                        Event newEvent = new Event(title, dateTimeLocal, url, score, city, locationArr, address);
+                        EventManager.addEvent(newEvent);
+                    } else {
+                        Log.w(TAG, "Could not get venue or location data");
+                    }
+
+
+                }
             }
-//
-//            //Log.e(TAG, "Num of jobs is " + String.valueOf(jsonArray.length()));
-//            for(int i=0; i < jsonArray.length(); i++){
-//                JSONObject jsonObject = jsonArray.getJSONObject(i);
-//
-//                String id = jsonObject.optString("id");
-//                String title = jsonObject.optString("title");
-//                String date = jsonObject.optString("datetime_local");
-//                String ticket_url = jsonObject.optString("url");
-//                String city = jsonObject.optString("city");
-//                Log.e(TAG, title);
-//                //String[] location = jsonObject.optString("location");
-//                //System.out.println(location[0]);
-//
-//            }
-
 
 
             out.close();

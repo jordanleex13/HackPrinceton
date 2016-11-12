@@ -1,12 +1,13 @@
 package com.jordanleex13.hackprinceton;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.jordanleex13.hackprinceton.Helpers.RunnableParseJson;
+import com.jordanleex13.hackprinceton.Helpers.Utils;
 
 public class ActivityMain extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,8 +28,9 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.launchMapButton:
-                Intent intent = new Intent(this, RecognizeActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(this, ActivityMaps.class);
+//                startActivity(intent);
+                Log.e("fe", Utils.getIPAddress(true));
 
                 break;
         }

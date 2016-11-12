@@ -91,7 +91,7 @@ public class RecognizeActivity extends ActionBarActivity {
     // The image selected to detect.
     private Bitmap mBitmap;
 
-    // The edit to show status and result.
+    // The text to show status and result.
     private TextView mTextView;
 
     private EmotionServiceClient client;
@@ -196,27 +196,26 @@ public class RecognizeActivity extends ActionBarActivity {
                     } else {
                         imageUri = data.getData();
                     }
-                    Intent intent = new Intent();
-                    intent.setData(imageUri);
-//                    setResult(RESULT_OK, intent);
-//                    finish();
 
-                    // If image is selected successfully, set the image URI and bitmap.
-                    mImageUri = imageUri;
+                    if (imageUri != null) {
+                        // If image is selected successfully, set the image URI and bitmap.
+                        mImageUri = imageUri;
 
-                    mBitmap = ImageHelper.loadSizeLimitedBitmapFromUri(
-                            mImageUri, getContentResolver());
-                    if (mBitmap != null) {
-                        // Show the image on screen.
-                        ImageView imageView = (ImageView) findViewById(R.id.selectedImage);
-                        imageView.setImageBitmap(mBitmap);
+                        mBitmap = ImageHelper.loadSizeLimitedBitmapFromUri(
+                                mImageUri, getContentResolver());
+                        if (mBitmap != null) {
+                            // Show the image on screen.
+                            ImageView imageView = (ImageView) findViewById(R.id.selectedImage);
+                            imageView.setImageBitmap(mBitmap);
 
-                        // Add detection log.
-                        Log.d("RecognizeActivity", "Image: " + mImageUri + " resized to " + mBitmap.getWidth()
-                                + "x" + mBitmap.getHeight());
+                            // Add detection log.
+                            Log.d("RecognizeActivity", "Image: " + mImageUri + " resized to " + mBitmap.getWidth()
+                                    + "x" + mBitmap.getHeight());
 
-                        doRecognize();
+                            doRecognize();
+                        }
                     }
+
                 }
             default:
                 break;
