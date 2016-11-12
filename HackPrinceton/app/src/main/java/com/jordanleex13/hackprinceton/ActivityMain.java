@@ -1,28 +1,33 @@
 package com.jordanleex13.hackprinceton;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
-import com.jordanleex13.hackprinceton.Helpers.FragmentHelper;
+import com.jordanleex13.hackprinceton.Helpers.RunnableParseJson;
 
-public class ActivityMain extends AppCompatActivity {
+public class ActivityMain extends AppCompatActivity implements View.OnClickListener {
 
+    Button mButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolBar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        mButton = (Button) findViewById(R.id.launchMapButton);
+        mButton.setOnClickListener(this);
+    }
 
-        if (toolBar != null) {
-            toolBar.setTitle("Main");
-            toolBar.setTitleTextColor(getResources().getColor(R.color.white));
-            setSupportActionBar(toolBar);
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.launchMapButton:
+//                Intent intent = new Intent(this, ActivityMaps.class);
+//                startActivity(intent);
+
+                new Thread(new RunnableParseJson("HellO")).start();
+                break;
         }
-
-        FragmentMain newFragment = FragmentMain.newInstance();
-        FragmentHelper.swapFragments(getSupportFragmentManager(), R.id.activity_main_container, newFragment,
-                true, false, null, FragmentMain.TAG);
     }
 }
