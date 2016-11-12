@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-package com.microsoft.projectoxford.emotionsample.helper;
+package com.jordanleex13.hackprinceton;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -41,8 +41,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.TextView;
-
-import com.microsoft.projectoxford.emotionsample.R;
 
 import java.io.File;
 import java.io.IOException;

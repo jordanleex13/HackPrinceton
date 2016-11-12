@@ -34,11 +34,11 @@ public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
             float[] coor = currEvent.getCoordinates();
 
             LatLng latlng = new LatLng(coor[0], coor[1]);
-//            String jobTitle = currEvent.getEventTitle();
-//            String company = currEvent.getCompany();
-//            String url = currEvent.getUrl();
+            String title = currEvent.getEventTitle();
+            String dateTimeLocal = currEvent.getDatetime_local();
+            String url = currEvent.getUrl();
 
-            //publishProgress(latlng, jobTitle, company, url);
+            publishProgress(latlng, title, dateTimeLocal, url);
 
         }
         return null;
@@ -49,12 +49,13 @@ public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
         super.onProgressUpdate(values);
 
         LatLng curr = (LatLng) values[0];
-        String jobTitle = (String) values[1];
-        String company = (String) values[2];
+        String title = (String) values[1];
+        String dateTimeLocal = (String) values[2];
+
+        //String rating = "Rating : " + score;
         String url = (String) values[3];
 
-
-        Marker temp = mMap.addMarker(new MarkerOptions().position(curr).title(jobTitle).snippet(company));
+        Marker temp = mMap.addMarker(new MarkerOptions().position(curr).title(title).snippet(dateTimeLocal));
         mHashMap.put(temp, url);
 
     }

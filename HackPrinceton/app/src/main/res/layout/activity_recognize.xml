@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation = "vertical">
+
+
+
+    <TextView
+        android:id="@+id/activity_recognize_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:layout_centerHorizontal="true"
+        android:text="Take a pic. Find an event today!"
+        android:textSize="@dimen/medium_text"
+        android:fontFamily="sans-serif-light"/>
+
+
+
+    <ImageView
+        android:id="@+id/selectedImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:background="#E0E0E0"
+        android:layout_below="@id/activity_recognize_prompt"/>
+
+
+    <ScrollView
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_margin"
+        android:layout_gravity="right"
+        android:layout_below="@id/selectedImage"
+        android:layout_above="@+id/buttonSelectImage">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/textViewResult"
+            android:layout_weight="1" />
+    </ScrollView>
+
+
+    <Button
+        android:id="@id/buttonSelectImage"
+        android:onClick="selectImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:text="Take A Pic"
+        android:textSize="@dimen/medium_text"
+        android:fontFamily="sans-serif-light"
+        style="@android:style/ButtonBar" />
+    
+</RelativeLayout>

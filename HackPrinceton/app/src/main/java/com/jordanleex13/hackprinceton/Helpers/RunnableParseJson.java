@@ -2,13 +2,15 @@ package com.jordanleex13.hackprinceton.Helpers;
 
 import android.util.Log;
 
+import com.jordanleex13.hackprinceton.Managers.EventManager;
+import com.jordanleex13.hackprinceton.Model.Event;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,22 +62,45 @@ public class RunnableParseJson implements Runnable {
 
             JSONObject reader = new JSONObject(responseString);
 
-            //Get the instance of JSONArray that contains JSONObjects
-            JSONArray jsonArray = reader.optJSONArray("results");
-            //Log.e(TAG, "Num of jobs is " + String.valueOf(jsonArray.length()));
-            for(int i=0; i < jsonArray.length(); i++){
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+            String id = reader.getString("id");
+            System.out.println(id);
 
-                String id = jsonObject.optString("id");
-                String title = jsonObject.optString("title");
-                String date = jsonObject.optString("datetime_local");
-                String ticket_url = jsonObject.optString("url");
-                String city = jsonObject.optString("city");
-                Log.e(TAG, title);
-                //String[] location = jsonObject.optString("location");
-                //System.out.println(location[0]);
+            String title = reader.getString("title");
+            String score = reader.getString("score");
+            String url = reader.getString("url");
+            String dateTimeLocal = reader.getString("datetime_local");
 
+            JSONObject venue = reader.getJSONObject("venue");
+
+            if (venue != null) {
+                String city = venue.getString("city");
+
+                JSONObject location = venue.getJSONObject("location");
+                String lat = location.getString("lat");
+                String lon = location.getString("lon");
+                String locationArr[] = {lat,lon};
+                String address = venue.getString("address");
+
+                Event newEvent = new Event(title, dateTimeLocal, url, score, city, locationArr, address);
+                EventManager.addEvent(newEvent);
+            } else {
+                Log.w(TAG, "Could not get venue or location data");
             }
+//
+//            //Log.e(TAG, "Num of jobs is " + String.valueOf(jsonArray.length()));
+//            for(int i=0; i < jsonArray.length(); i++){
+//                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//
+//                String id = jsonObject.optString("id");
+//                String title = jsonObject.optString("title");
+//                String date = jsonObject.optString("datetime_local");
+//                String ticket_url = jsonObject.optString("url");
+//                String city = jsonObject.optString("city");
+//                Log.e(TAG, title);
+//                //String[] location = jsonObject.optString("location");
+//                //System.out.println(location[0]);
+//
+//            }
 
 
 

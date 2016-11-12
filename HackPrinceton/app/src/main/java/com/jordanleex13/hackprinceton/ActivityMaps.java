@@ -1,5 +1,7 @@
 package com.jordanleex13.hackprinceton;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -8,15 +10,24 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.jordanleex13.hackprinceton.Helpers.FillMapWithMarkersTask;
 
-public class ActivityMaps extends FragmentActivity implements OnMapReadyCallback {
+import java.util.HashMap;
+
+public class ActivityMaps extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private GoogleMap mMap;
+
+    private HashMap<Marker, String> markerHashMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        markerHashMap = new HashMap<>();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -46,5 +57,16 @@ public class ActivityMaps extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(princeton, 10.0f));
 
         mMap.clear();
+
+        mMap.setOnInfoWindowClickListener(this);
+
+        new FillMapWithMarkersTask(mMap, markerHashMap).execute();
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        String markerURL = markerHashMap.get(marker);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(markerURL));
+        startActivity(browserIntent);
     }
 }

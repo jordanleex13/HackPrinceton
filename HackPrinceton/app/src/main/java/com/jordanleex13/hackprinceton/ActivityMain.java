@@ -1,5 +1,6 @@
 package com.jordanleex13.hackprinceton;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,16 +18,18 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
 
         mButton = (Button) findViewById(R.id.launchMapButton);
         mButton.setOnClickListener(this);
+
+        new Thread(new RunnableParseJson("HellO")).start();
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.launchMapButton:
-//                Intent intent = new Intent(this, ActivityMaps.class);
-//                startActivity(intent);
+                Intent intent = new Intent(this, RecognizeActivity.class);
+                startActivity(intent);
 
-                new Thread(new RunnableParseJson("HellO")).start();
                 break;
         }
     }

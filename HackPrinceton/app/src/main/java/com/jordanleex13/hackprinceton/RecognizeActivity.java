@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-package com.microsoft.projectoxford.emotionsample;
+package com.jordanleex13.hackprinceton;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -41,41 +41,46 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
+import com.jordanleex13.hackprinceton.Helpers.ImageHelper;
 import com.microsoft.projectoxford.emotion.EmotionServiceClient;
 import com.microsoft.projectoxford.emotion.EmotionServiceRestClient;
 import com.microsoft.projectoxford.emotion.contract.FaceRectangle;
 import com.microsoft.projectoxford.emotion.contract.RecognizeResult;
 import com.microsoft.projectoxford.emotion.rest.EmotionServiceException;
-import com.microsoft.projectoxford.emotionsample.helper.ImageHelper;
-
-import com.microsoft.projectoxford.emotionsample.helper.SelectImageActivity;
 import com.microsoft.projectoxford.face.FaceServiceRestClient;
 import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.rest.ClientException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public class RecognizeActivity extends ActionBarActivity {
 
-    // Flag to indicate which task is to be performed.
-    private static final int REQUEST_SELECT_IMAGE = 0;
+    public static final String TAG = RecognizeActivity.class.getSimpleName();
+
+    private static final int REQUEST_TAKE_PHOTO = 0;
+
+    // The URI of photo taken with camera
+    private Uri mUriPhotoTaken;
 
     // The button to select an image
     private Button mButtonSelectImage;
@@ -87,7 +92,7 @@ public class RecognizeActivity extends ActionBarActivity {
     private Bitmap mBitmap;
 
     // The edit to show status and result.
-    private EditText mEditText;
+    private TextView mTextView;
 
     private EmotionServiceClient client;
     /**
@@ -106,7 +111,7 @@ public class RecognizeActivity extends ActionBarActivity {
         }
 
         mButtonSelectImage = (Button) findViewById(R.id.buttonSelectImage);
-        mEditText = (EditText) findViewById(R.id.editTextResult);
+        mTextView = (TextView) findViewById(R.id.textViewResult);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -141,29 +146,40 @@ public class RecognizeActivity extends ActionBarActivity {
         try {
             new doRequest(false).execute();
         } catch (Exception e) {
-            mEditText.append("Error encountered. Exception is: " + e.toString());
+            mTextView.append("Error encountered. Exception is: " + e.toString());
         }
 
         String faceSubscriptionKey = getString(R.string.faceSubscription_key);
         if (faceSubscriptionKey.equalsIgnoreCase("Please_add_the_face_subscription_key_here")) {
-            mEditText.append("\n\nThere is no face subscription key in res/values/strings.xml. Skip the sample for detecting emotions using face rectangles\n");
+            mTextView.append("\n\nThere is no face subscription key in res/values/strings.xml. Skip the sample for detecting emotions using face rectangles\n");
         } else {
             // Do emotion detection using face rectangles provided by Face API.
             try {
                 new doRequest(true).execute();
             } catch (Exception e) {
-                mEditText.append("Error encountered. Exception is: " + e.toString());
+                mTextView.append("Error encountered. Exception is: " + e.toString());
             }
         }
     }
 
     // Called when the "Select Image" button is clicked.
     public void selectImage(View view) {
-        mEditText.setText("");
+        mTextView.setText("");
 
-        Intent intent;
-        intent = new Intent(RecognizeActivity.this, SelectImageActivity.class);
-        startActivityForResult(intent, REQUEST_SELECT_IMAGE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(intent.resolveActivity(getPackageManager()) != null) {
+            // Save the photo taken to a temporary file.
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            try {
+                File file = File.createTempFile("IMG_", ".jpg", storageDir);
+                mUriPhotoTaken = Uri.fromFile(file);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoTaken);
+                startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+            } catch (IOException e) {
+                //setInfo(e.getMessage());
+                Log.e(TAG, e.getMessage());
+            }
+        }
     }
 
     // Called when image selection is done.
@@ -171,10 +187,22 @@ public class RecognizeActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("RecognizeActivity", "onActivityResult");
         switch (requestCode) {
-            case REQUEST_SELECT_IMAGE:
+
+            case REQUEST_TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
+                    Uri imageUri;
+                    if (data == null || data.getData() == null) {
+                        imageUri = mUriPhotoTaken;
+                    } else {
+                        imageUri = data.getData();
+                    }
+                    Intent intent = new Intent();
+                    intent.setData(imageUri);
+//                    setResult(RESULT_OK, intent);
+//                    finish();
+
                     // If image is selected successfully, set the image URI and bitmap.
-                    mImageUri = data.getData();
+                    mImageUri = imageUri;
 
                     mBitmap = ImageHelper.loadSizeLimitedBitmapFromUri(
                             mImageUri, getContentResolver());
@@ -190,7 +218,6 @@ public class RecognizeActivity extends ActionBarActivity {
                         doRecognize();
                     }
                 }
-                break;
             default:
                 break;
         }
@@ -291,7 +318,7 @@ public class RecognizeActivity extends ActionBarActivity {
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.microsoft.projectoxford.emotionsample/http/host/path")
+                Uri.parse("android-app://com.jordanleex13.hackprinceton/http/host/path")
         );
         AppIndex.AppIndexApi.start(client2, viewAction);
     }
@@ -310,7 +337,7 @@ public class RecognizeActivity extends ActionBarActivity {
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.microsoft.projectoxford.emotionsample/http/host/path")
+                Uri.parse("android-app://com.jordanleex13.hackprinceton/http/host/path")
         );
         AppIndex.AppIndexApi.end(client2, viewAction);
         client2.disconnect();
@@ -349,16 +376,16 @@ public class RecognizeActivity extends ActionBarActivity {
             // Display based on error existence
 
             if (this.useFaceRectangles == false) {
-                mEditText.append("\n\nRecognizing emotions with auto-detected face rectangles...\n");
+                mTextView.append("\n\nRecognizing emotions with auto-detected face rectangles...\n");
             } else {
-                mEditText.append("\n\nRecognizing emotions with existing face rectangles from Face API...\n");
+                mTextView.append("\n\nRecognizing emotions with existing face rectangles from Face API...\n");
             }
             if (e != null) {
-                mEditText.setText("Error: " + e.getMessage());
+                mTextView.setText("Error: " + e.getMessage());
                 this.e = null;
             } else {
                 if (result.size() == 0) {
-                    mEditText.append("No emotion detected :(");
+                    mTextView.append("No emotion detected :(");
                 } else {
                     Integer count = 0;
                     // Covert bitmap to a mutable bitmap by copying it
@@ -371,16 +398,16 @@ public class RecognizeActivity extends ActionBarActivity {
                     paint.setColor(Color.RED);
 
                     for (RecognizeResult r : result) {
-                        mEditText.append(String.format("\nFace #%1$d \n", count));
-                        mEditText.append(String.format("\t anger: %1$.5f\n", r.scores.anger));
-                        mEditText.append(String.format("\t contempt: %1$.5f\n", r.scores.contempt));
-                        mEditText.append(String.format("\t disgust: %1$.5f\n", r.scores.disgust));
-                        mEditText.append(String.format("\t fear: %1$.5f\n", r.scores.fear));
-                        mEditText.append(String.format("\t happiness: %1$.5f\n", r.scores.happiness));
-                        mEditText.append(String.format("\t neutral: %1$.5f\n", r.scores.neutral));
-                        mEditText.append(String.format("\t sadness: %1$.5f\n", r.scores.sadness));
-                        mEditText.append(String.format("\t surprise: %1$.5f\n", r.scores.surprise));
-                        mEditText.append(String.format("\t face rectangle: %d, %d, %d, %d", r.faceRectangle.left, r.faceRectangle.top, r.faceRectangle.width, r.faceRectangle.height));
+                        mTextView.append(String.format("\nFace #%1$d \n", count));
+                        mTextView.append(String.format("\t anger: %1$.5f\n", r.scores.anger));
+                        mTextView.append(String.format("\t contempt: %1$.5f\n", r.scores.contempt));
+                        mTextView.append(String.format("\t disgust: %1$.5f\n", r.scores.disgust));
+                        mTextView.append(String.format("\t fear: %1$.5f\n", r.scores.fear));
+                        mTextView.append(String.format("\t happiness: %1$.5f\n", r.scores.happiness));
+                        mTextView.append(String.format("\t neutral: %1$.5f\n", r.scores.neutral));
+                        mTextView.append(String.format("\t sadness: %1$.5f\n", r.scores.sadness));
+                        mTextView.append(String.format("\t surprise: %1$.5f\n", r.scores.surprise));
+                        mTextView.append(String.format("\t face rectangle: %d, %d, %d, %d", r.faceRectangle.left, r.faceRectangle.top, r.faceRectangle.width, r.faceRectangle.height));
                         // detect which one is the greatest
                         // based on the greatest, run queries through the seatgeek api
                         // return selections onto the map.
@@ -433,7 +460,8 @@ public class RecognizeActivity extends ActionBarActivity {
                     ImageView imageView = (ImageView) findViewById(R.id.selectedImage);
                     imageView.setImageDrawable(new BitmapDrawable(getResources(), mBitmap));
                 }
-                mEditText.setSelection(0);
+//                mTextView.setSelection(0);
+
             }
 
             mButtonSelectImage.setEnabled(true);
