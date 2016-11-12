@@ -50,7 +50,7 @@ public class RunnableParseJson implements Runnable {
         String ipAddress = Utils.getIPAddress(true);
         String in;
         if (!ipAddress.isEmpty()) {
-            in = "https://api.seatgeek.com/2/events?taxonomies.name=" + searchTerm + "&per_page=40&geoip=" + ipAddress + "&range=40mi";
+            in = "https://api.seatgeek.com/2/events?taxonomies.name=" + searchTerm + "&per_page=25&geoip=" + ipAddress + "&range=40mi";
         } else {
             in = "https://api.seatgeek.com/2/events?taxonomies.name=" + searchTerm + "&per_page=40";
         }

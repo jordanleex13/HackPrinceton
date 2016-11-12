@@ -58,6 +58,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.jordanleex13.hackprinceton.Helpers.ImageHelper;
+import com.jordanleex13.hackprinceton.Helpers.RunnableParseJson;
 import com.microsoft.projectoxford.emotion.EmotionServiceClient;
 import com.microsoft.projectoxford.emotion.EmotionServiceRestClient;
 import com.microsoft.projectoxford.emotion.contract.FaceRectangle;
@@ -73,7 +74,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class RecognizeActivity extends ActionBarActivity {
+public class RecognizeActivity extends ActionBarActivity implements View.OnClickListener{
 
     public static final String TAG = RecognizeActivity.class.getSimpleName();
 
@@ -83,7 +84,8 @@ public class RecognizeActivity extends ActionBarActivity {
     private Uri mUriPhotoTaken;
 
     // The button to select an image
-    private Button mButtonSelectImage;
+    private Button mButtonTakePic;
+    private Button mButtonLaunchMaps;
 
     // The URI of the image selected to detect.
     private Uri mImageUri;
@@ -101,6 +103,11 @@ public class RecognizeActivity extends ActionBarActivity {
      */
     private GoogleApiClient client2;
 
+
+
+    private boolean enableLaunchMaps = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +117,13 @@ public class RecognizeActivity extends ActionBarActivity {
             client = new EmotionServiceRestClient(getString(R.string.subscription_key));
         }
 
-        mButtonSelectImage = (Button) findViewById(R.id.buttonSelectImage);
+        mButtonTakePic = (Button) findViewById(R.id.buttonTakePic);
+        mButtonTakePic.setOnClickListener(this);
+        mButtonLaunchMaps = (Button) findViewById(R.id.buttonLaunchMaps);
+        mButtonLaunchMaps.setOnClickListener(this);
+        mButtonLaunchMaps.setEnabled(false);
+        mButtonLaunchMaps.setBackgroundColor(getResources().getColor(R.color.light_gray));
+
         mTextView = (TextView) findViewById(R.id.textViewResult);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -140,7 +153,7 @@ public class RecognizeActivity extends ActionBarActivity {
     }
 
     public void doRecognize() {
-        mButtonSelectImage.setEnabled(false);
+        mButtonTakePic.setEnabled(false);
 
         // Do emotion detection using auto-detected faces.
         try {
@@ -163,7 +176,7 @@ public class RecognizeActivity extends ActionBarActivity {
     }
 
     // Called when the "Select Image" button is clicked.
-    public void selectImage(View view) {
+    public void takePic(View view) {
         mTextView.setText("");
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -182,6 +195,27 @@ public class RecognizeActivity extends ActionBarActivity {
         }
     }
 
+    public void launchMaps() {
+        Log.d(TAG, "Starting background thread");
+
+        String query = "sports";
+
+
+        // Harold's stuff
+
+
+
+
+        new Thread(new RunnableParseJson(query)).start();
+
+
+
+
+        Intent intent = new Intent(this, ActivityMaps.class);
+        startActivity(intent);
+
+
+    }
     // Called when image selection is done.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -342,6 +376,18 @@ public class RecognizeActivity extends ActionBarActivity {
         client2.disconnect();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.buttonTakePic:
+                takePic(v);
+                break;
+            case R.id.buttonLaunchMaps:
+                launchMaps();
+                break;
+        }
+    }
+
     private class doRequest extends AsyncTask<String, String, List<RecognizeResult>> {
         // Store error message
         private Exception e = null;
@@ -463,7 +509,9 @@ public class RecognizeActivity extends ActionBarActivity {
 
             }
 
-            mButtonSelectImage.setEnabled(true);
+            mButtonTakePic.setEnabled(true);
+            mButtonLaunchMaps.setEnabled(true);
+            mButtonLaunchMaps.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         }
     }
 }
