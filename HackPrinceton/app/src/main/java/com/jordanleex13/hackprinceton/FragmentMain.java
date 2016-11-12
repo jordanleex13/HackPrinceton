@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.jordanleex13.hackprinceton.Helpers.FragmentHelper;
 
@@ -20,9 +22,8 @@ public class FragmentMain extends Fragment {
 
     public static final String TAG = FragmentMain.class.getSimpleName();
 
-    public FragmentMain() {
-        // Required empty public constructor
-    }
+    private Spinner mUsernameSpinner;
+    private ArrayAdapter mSpinnerAdapter;
 
 
     public static FragmentMain newInstance() {
@@ -45,8 +46,13 @@ public class FragmentMain extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         View v = inflater.inflate(R.layout.fragment_main, container, false);
+        View v = inflater.inflate(R.layout.fragment_main, container, false);
 
+        mUsernameSpinner = (Spinner) v.findViewById(R.id.fragment_main_spinner_username);
+
+        // create and link the adapter to the spinner object
+        mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, ActivityOnePlayer.mUsers);
+        mUsernameSpinner.setAdapter(mSpinnerAdapter);
 
         return v;
     }
