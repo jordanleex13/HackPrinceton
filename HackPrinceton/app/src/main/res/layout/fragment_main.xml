@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.jordanleex13.hackprinceton.FragmentMain">
-    
+
     <TextView
         android:layout_marginTop="@dimen/top_margin"
         android:layout_width="match_parent"
