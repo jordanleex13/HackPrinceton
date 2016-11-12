@@ -24,6 +24,7 @@ public class RunnableParseJson implements Runnable {
     private static final String TAG = RunnableParseJson.class.getSimpleName();
 
     private String mQuery;
+
     public RunnableParseJson(String query) {
         mQuery = query;
     }
