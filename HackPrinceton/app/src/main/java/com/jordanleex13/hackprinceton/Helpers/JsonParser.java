@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class JsonParser {
 
-    String base = "https://api.seatgeek.com/2/events/3315199";
+    String base = "https://api.seatgeek.com/2";
 
     public void httpGet(String searchTerm) throws IOException, JSONException {
 
@@ -57,6 +57,8 @@ public class JsonParser {
                String city = jsonObject.optString("city");
                String[] location = jsonObject.optString("location");
                System.out.println(location[0]);
+
+
 
            }
 
