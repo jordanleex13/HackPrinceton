@@ -1,6 +1,5 @@
 import requests
 
-
 url = "https://api.seatgeek.com/2/taxonomies"
 
 r = requests.get(url)
