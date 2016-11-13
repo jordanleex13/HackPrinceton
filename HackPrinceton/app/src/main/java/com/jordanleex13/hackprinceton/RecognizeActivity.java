@@ -95,7 +95,8 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
     private Bitmap mBitmap;
 
     // The text to show status and result.
-    private TextView mTextView;
+    private TextView mTextEmotion;
+    private TextView mTextRecommendation;
 
     private EmotionServiceClient client;
     /**
@@ -104,6 +105,7 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
      */
     private GoogleApiClient client2;
 
+    // Array of (max 4) queries
     private String[] searchQueries = new String[4];
 
     @Override
@@ -122,7 +124,8 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
         mButtonLaunchMaps.setEnabled(false);
         mButtonLaunchMaps.setBackgroundColor(getResources().getColor(R.color.light_gray));
 
-        mTextView = (TextView) findViewById(R.id.textViewResult);
+        mTextEmotion = (TextView) findViewById(R.id.textViewResult);
+        mTextRecommendation = (TextView) findViewById(R.id.activity_recognize_recommendation);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -157,25 +160,25 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
         try {
             new doRequest(false).execute();
         } catch (Exception e) {
-            mTextView.append("Error encountered. Exception is: " + e.toString());
+            mTextEmotion.append("Error encountered. Exception is: " + e.toString());
         }
 
 //        String faceSubscriptionKey = getString(R.string.faceSubscription_key);
 //        if (faceSubscriptionKey.equalsIgnoreCase("Please_add_the_face_subscription_key_here")) {
-//            mTextView.append("\n\nThere is no face subscription key in res/values/strings.xml. Skip the sample for detecting emotions using face rectangles\n");
+//            mTextEmotion.append("\n\nThere is no face subscription key in res/values/strings.xml. Skip the sample for detecting emotions using face rectangles\n");
 //        } else {
 //            // Do emotion detection using face rectangles provided by Face API.
 //            try {
 //                new doRequest(true).execute();
 //            } catch (Exception e) {
-//                mTextView.append("Error encountered. Exception is: " + e.toString());
+//                mTextEmotion.append("Error encountered. Exception is: " + e.toString());
 //            }
 //        }
     }
 
     // Called when the "Select Image" button is clicked.
     public void takePic(View view) {
-        mTextView.setText("");
+        mTextEmotion.setText("");
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(intent.resolveActivity(getPackageManager()) != null) {
@@ -367,6 +370,8 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonTakePic:
+                mTextRecommendation.setText("");
+                mTextEmotion.setText("");
                 takePic(v);
                 break;
             case R.id.buttonLaunchMaps:
@@ -408,16 +413,16 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
             // Display based on error existence
 
             if (this.useFaceRectangles == false) {
-                //mTextView.append("\n\nRecognizing emotions with auto-detected face rectangles...\n");
+                //mTextEmotion.append("\n\nRecognizing emotions with auto-detected face rectangles...\n");
             } else {
-                //mTextView.append("\n\nRecognizing emotions with existing face rectangles from Face API...\n");
+                //mTextEmotion.append("\n\nRecognizing emotions with existing face rectangles from Face API...\n");
             }
             if (e != null) {
-                mTextView.setText("Error: " + e.getMessage());
+                mTextEmotion.setText("Error: " + e.getMessage());
                 this.e = null;
             } else {
                 if (result.size() == 0) {
-                    mTextView.append("No emotion detected :(");
+                    mTextEmotion.append("No emotion detected :(");
                 } else {
                     Integer count = 0;
                     // Covert bitmap to a mutable bitmap by copying it
@@ -431,16 +436,16 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
 
                     double[] scoreArr = new double[8];
                     for (RecognizeResult r : result) {
-//                        mTextView.append(String.format("\nFace #%1$d \n", count));
-//                        mTextView.append(String.format("\t anger: %1$.5f\n", r.scores.anger));
-//                        mTextView.append(String.format("\t contempt: %1$.5f\n", r.scores.contempt));
-//                        mTextView.append(String.format("\t disgust: %1$.5f\n", r.scores.disgust));
-//                        mTextView.append(String.format("\t fear: %1$.5f\n", r.scores.fear));
-//                        mTextView.append(String.format("\t happiness: %1$.5f\n", r.scores.happiness));
-//                        mTextView.append(String.format("\t neutral: %1$.5f\n", r.scores.neutral));
-//                        mTextView.append(String.format("\t sadness: %1$.5f\n", r.scores.sadness));
-//                        mTextView.append(String.format("\t surprise: %1$.5f\n", r.scores.surprise));
-//                        mTextView.append(String.format("\t face rectangle: %d, %d, %d, %d", r.faceRectangle.left, r.faceRectangle.top, r.faceRectangle.width, r.faceRectangle.height));
+//                        mTextEmotion.append(String.format("\nFace #%1$d \n", count));
+//                        mTextEmotion.append(String.format("\t anger: %1$.5f\n", r.scores.anger));
+//                        mTextEmotion.append(String.format("\t contempt: %1$.5f\n", r.scores.contempt));
+//                        mTextEmotion.append(String.format("\t disgust: %1$.5f\n", r.scores.disgust));
+//                        mTextEmotion.append(String.format("\t fear: %1$.5f\n", r.scores.fear));
+//                        mTextEmotion.append(String.format("\t happiness: %1$.5f\n", r.scores.happiness));
+//                        mTextEmotion.append(String.format("\t neutral: %1$.5f\n", r.scores.neutral));
+//                        mTextEmotion.append(String.format("\t sadness: %1$.5f\n", r.scores.sadness));
+//                        mTextEmotion.append(String.format("\t surprise: %1$.5f\n", r.scores.surprise));
+//                        mTextEmotion.append(String.format("\t face rectangle: %d, %d, %d, %d", r.faceRectangle.left, r.faceRectangle.top, r.faceRectangle.width, r.faceRectangle.height));
 
                         scoreArr[0] = r.scores.anger;
                         scoreArr[1] = r.scores.contempt;
@@ -494,16 +499,24 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
                     // list of queries to search.
                     searchQueries = ew.getSearchTerms();
 
-                    mTextView.append("You are " + emotion + ". Event recommendation: \n");
+                    mTextEmotion.setText("You are " + emotion + ". Eventify recommends");
+
+                    String recommendation = "";
                     for (int i = 0; i < searchQueries.length;i++) {
                         System.out.println("Search Query " + i + " : " + searchQueries[i]);
-                        mTextView.append("\t " + searchQueries[i] );
+                        if (i == 0) {
+                            recommendation = searchQueries[i];
+                        } else {
+                            recommendation = recommendation +  "\t" + searchQueries[i];
+                        }
+
                     }
 
+                    mTextRecommendation.setText(recommendation);
                     ImageView imageView = (ImageView) findViewById(R.id.selectedImage);
                     imageView.setImageDrawable(new BitmapDrawable(getResources(), mBitmap));
                 }
-//                mTextView.setSelection(0);
+//                mTextEmotion.setSelection(0);
 
             }
 

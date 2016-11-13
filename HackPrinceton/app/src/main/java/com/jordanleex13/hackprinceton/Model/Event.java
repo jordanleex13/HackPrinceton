@@ -6,6 +6,9 @@ import android.util.Log;
  * Created by Jordan on 2016-11-12.
  */
 
+/**
+ * Data structure to hold event object from SeatGeek API
+ */
 public class Event {
 
     private String title;
@@ -40,13 +43,13 @@ public class Event {
             this.score = 0;
         }
 
-        printAll();
+        //printAll();
     }
 
 
     /**
      * Parse time and display in a more readable format
-     * @param dt            dt in form yyyy-mm-dd
+     * @param dt            dt in form yyyy-mm-ddThh:mm:ss      ex 2012-03-09T19:00:00"
      */
     private void dateTimeFormatter(String dt) {
 

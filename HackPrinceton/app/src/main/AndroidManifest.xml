@@ -42,7 +42,7 @@
 
         <activity
             android:name=".RecognizeActivity"
-            android:label="Emotion Recognition"
+            android:label="Eventify"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
