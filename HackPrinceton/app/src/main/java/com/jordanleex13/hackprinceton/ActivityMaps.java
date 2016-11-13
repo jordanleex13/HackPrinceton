@@ -12,6 +12,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.jordanleex13.hackprinceton.Helpers.FillMapWithMarkersTask;
+import com.jordanleex13.hackprinceton.Managers.EventManager;
 
 import java.util.HashMap;
 
@@ -61,6 +62,13 @@ public class ActivityMaps extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnInfoWindowClickListener(this);
 
         new FillMapWithMarkersTask(mMap, markerHashMap).execute();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mMap.clear();
+        EventManager.clearList();
     }
 
     @Override

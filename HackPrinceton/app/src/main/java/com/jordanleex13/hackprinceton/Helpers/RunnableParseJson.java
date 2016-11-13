@@ -46,12 +46,15 @@ public class RunnableParseJson implements Runnable {
 
     public void httpGet(String searchTerm) throws IOException, JSONException {
 
-        searchTerm = "sports";
         String ipAddress = Utils.getIPAddress(true);
         String in;
+
+        https://seatgeek.com/drake-tickets/london-uk-the-o2-1-2017-02-15-7-30-pm/concert/3565909
+
         if (!ipAddress.isEmpty()) {
             in = "https://api.seatgeek.com/2/events?taxonomies.name=" + searchTerm + "&per_page=25&geoip=" + ipAddress + "&range=40mi";
         } else {
+            Log.e(TAG, "IP address is empty. Defaulting search");
             in = "https://api.seatgeek.com/2/events?taxonomies.name=" + searchTerm + "&per_page=40";
         }
         //in += searchTerm;

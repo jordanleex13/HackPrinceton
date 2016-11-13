@@ -1,6 +1,7 @@
 package com.jordanleex13.hackprinceton.Helpers;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -28,6 +29,7 @@ public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
     @Override
     protected Object doInBackground(Object[] params) {
 
+        Log.e("FillMapTask", "Creating " + EventManager.getSize() + " markers");
         for (int i = 0; i < EventManager.getSize(); i++) {
 
             Event currEvent = EventManager.getEvent(i);
@@ -56,6 +58,7 @@ public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
         String url = (String) values[3];
 
         Marker temp = mMap.addMarker(new MarkerOptions().position(curr).title(title).snippet(dateTimeLocal));
+        Log.e("FillMapTask", "Inserting marker");
         mHashMap.put(temp, url);
 
     }

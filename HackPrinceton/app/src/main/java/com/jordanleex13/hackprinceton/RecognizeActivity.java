@@ -51,7 +51,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -59,6 +58,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.jordanleex13.hackprinceton.Helpers.ImageHelper;
 import com.jordanleex13.hackprinceton.Helpers.RunnableParseJson;
+import com.jordanleex13.hackprinceton.MachineLearning.EmotionalWant;
+import com.jordanleex13.hackprinceton.MachineLearning.Neural_Network;
 import com.microsoft.projectoxford.emotion.EmotionServiceClient;
 import com.microsoft.projectoxford.emotion.EmotionServiceRestClient;
 import com.microsoft.projectoxford.emotion.contract.FaceRectangle;
@@ -104,6 +105,7 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
     private GoogleApiClient client2;
 
 
+    private String[] searchQueries = new String[4];
 
     private boolean enableLaunchMaps = false;
 
@@ -198,23 +200,12 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
     public void launchMaps() {
         Log.d(TAG, "Starting background thread");
 
-        String query = "sports";
-
-
-        // Harold's stuff
-
-
-
-
-        new Thread(new RunnableParseJson(query)).start();
-
-
-
+        for (int i = 0; i < searchQueries.length; i++) {
+            new Thread(new RunnableParseJson(searchQueries[0])).start();
+        }
 
         Intent intent = new Intent(this, ActivityMaps.class);
         startActivity(intent);
-
-
     }
     // Called when image selection is done.
     @Override
@@ -457,6 +448,8 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
                         // based on the greatest, run queries through the seatgeek api
                         // return selections onto the map.
 
+
+
                         faceCanvas.drawRect(r.faceRectangle.left,
                                 r.faceRectangle.top,
                                 r.faceRectangle.left + r.faceRectangle.width,
@@ -464,44 +457,38 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
                                 paint);
                         count++;
                     }
-                    String largest = " ";
-                    double largestnum = 0;
-                    for (RecognizeResult r : result) {
-                        if(largestnum < r.scores.anger ){
-                            largestnum = r.scores.anger;
-                            largest = "anger";
-                        }
-                        if(largestnum < r.scores.contempt){
-                            largestnum = r.scores.contempt;
-                            largest = "contempt";
-                        }
-                        if(largestnum < r.scores.disgust ){
-                            largestnum = r.scores.disgust;
-                            largest = "disgust";
-                        }
-                        if(largestnum < r.scores.fear ){
-                            largestnum = r.scores.fear;
-                            largest = "fear";
-                        }
-                        if(largestnum < r.scores.happiness ){
-                            largestnum = r.scores.happiness;
-                            largest = "happy";
-                        }
-                        if(largestnum < r.scores.neutral ){
-                            largestnum = r.scores.neutral;
-                            largest = "neutral";
-                        }
-                        if(largestnum < r.scores.sadness ){
-                            largestnum = r.scores.sadness;
-                            largest = "sad";
-                        }
-                        if(largestnum < r.scores.surprise ) {
-                            largestnum = r.scores.surprise;
-                            largest = "surprise";
-                        }
+
+                    double[][] inputMood = new double[1][8];
+                    for (RecognizeResult r : result){
+                        inputMood = null;
+                        inputMood = new double[][]{{
+                                r.scores.anger,
+                                r.scores.contempt,
+                                r.scores.disgust,
+                                r.scores.fear,
+                                r.scores.happiness,
+                                r.scores.neutral,
+                                r.scores.sadness,
+                                r.scores.surprise
+                        }};
                     }
-                    // toast to debug
-                    Toast.makeText(getApplicationContext(),largest,Toast.LENGTH_SHORT).show();
+                    // get mood with machine learning
+                    double[] mood = Neural_Network.getMood(inputMood);
+
+                    for (int i = 0; i < mood.length;i++) {
+                        System.out.println(mood[i]);
+                    }
+
+                    // current want decided by emotions
+                    EmotionalWant ew = new EmotionalWant(mood[0],mood[1],mood[2],mood[3]);
+
+                    // list of queries to search.
+                    searchQueries = ew.getWant();
+
+                    for (int i = 0; i < searchQueries.length;i++) {
+                        System.out.println("Search Query " + i + " : " + searchQueries[i]);
+                    }
+
                     ImageView imageView = (ImageView) findViewById(R.id.selectedImage);
                     imageView.setImageDrawable(new BitmapDrawable(getResources(), mBitmap));
                 }
