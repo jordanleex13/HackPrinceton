@@ -39,7 +39,6 @@ public class EmotionalWant {
             String[] returnvalues = {"golf"};
             return returnvalues;
         }
-
         else if(exciting> 0.5){
             String[] returnvalues = {"concert","sports"};
             return (returnvalues);

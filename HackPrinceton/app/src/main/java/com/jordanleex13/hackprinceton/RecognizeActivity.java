@@ -431,16 +431,16 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
 
                     double[] scoreArr = new double[8];
                     for (RecognizeResult r : result) {
-                        mTextView.append(String.format("\nFace #%1$d \n", count));
-                        mTextView.append(String.format("\t anger: %1$.5f\n", r.scores.anger));
-                        mTextView.append(String.format("\t contempt: %1$.5f\n", r.scores.contempt));
-                        mTextView.append(String.format("\t disgust: %1$.5f\n", r.scores.disgust));
-                        mTextView.append(String.format("\t fear: %1$.5f\n", r.scores.fear));
-                        mTextView.append(String.format("\t happiness: %1$.5f\n", r.scores.happiness));
-                        mTextView.append(String.format("\t neutral: %1$.5f\n", r.scores.neutral));
-                        mTextView.append(String.format("\t sadness: %1$.5f\n", r.scores.sadness));
-                        mTextView.append(String.format("\t surprise: %1$.5f\n", r.scores.surprise));
-                        mTextView.append(String.format("\t face rectangle: %d, %d, %d, %d", r.faceRectangle.left, r.faceRectangle.top, r.faceRectangle.width, r.faceRectangle.height));
+//                        mTextView.append(String.format("\nFace #%1$d \n", count));
+//                        mTextView.append(String.format("\t anger: %1$.5f\n", r.scores.anger));
+//                        mTextView.append(String.format("\t contempt: %1$.5f\n", r.scores.contempt));
+//                        mTextView.append(String.format("\t disgust: %1$.5f\n", r.scores.disgust));
+//                        mTextView.append(String.format("\t fear: %1$.5f\n", r.scores.fear));
+//                        mTextView.append(String.format("\t happiness: %1$.5f\n", r.scores.happiness));
+//                        mTextView.append(String.format("\t neutral: %1$.5f\n", r.scores.neutral));
+//                        mTextView.append(String.format("\t sadness: %1$.5f\n", r.scores.sadness));
+//                        mTextView.append(String.format("\t surprise: %1$.5f\n", r.scores.surprise));
+//                        mTextView.append(String.format("\t face rectangle: %d, %d, %d, %d", r.faceRectangle.left, r.faceRectangle.top, r.faceRectangle.width, r.faceRectangle.height));
 
                         scoreArr[0] = r.scores.anger;
                         scoreArr[1] = r.scores.contempt;

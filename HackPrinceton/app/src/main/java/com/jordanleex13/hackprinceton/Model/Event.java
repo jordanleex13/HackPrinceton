@@ -43,6 +43,11 @@ public class Event {
         printAll();
     }
 
+
+    /**
+     * Parse time and display in a more readable format
+     * @param dt            dt in form yyyy-mm-dd
+     */
     private void dateTimeFormatter(String dt) {
 
         String delims = "[-]";
@@ -73,6 +78,11 @@ public class Event {
             default: return "Unknown month";
         }
     }
+
+
+    /**
+     * Getters
+     */
     public String getEventTitle() {
         return title;
     }
