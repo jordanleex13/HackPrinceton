@@ -1,5 +1,7 @@
 package com.jordanleex13.hackprinceton.Model;
 
+import android.util.Log;
+
 /**
  * Created by Jordan on 2016-11-12.
  */
@@ -20,8 +22,9 @@ public class Event {
 
     public Event(String title, String dt, String url, String scoreStr, String city, String[] location, String address) {
 
+        dateTimeFormatter(dt);
+
         this.title = title;
-        this.datetime_local = dt;
         this.url = url;
         this.scoreStr = scoreStr;
         this.city = city;
@@ -30,11 +33,46 @@ public class Event {
 
         this.latitude = Float.valueOf(location[0]);
         this.longitude = Float.valueOf(location[1]);
-        this.score = Float.valueOf(scoreStr);
+        if (Float.valueOf(scoreStr) != null){
+            this.score = Float.valueOf(scoreStr);
+        }
+        else{
+            this.score = 0;
+        }
 
         printAll();
     }
 
+    private void dateTimeFormatter(String dt) {
+
+        String delims = "[-]";
+        String[] tokens = dt.split(delims);
+
+        String month = getMonthFromNum(tokens[1]);
+        String delims2 = "[T]";
+        String[] temp = tokens[2].split(delims2);
+
+        datetime_local = month + " " + temp[0] + ", " + tokens[0] + " @ " + temp[1];
+        Log.e("EVENT", datetime_local);
+    }
+    private String getMonthFromNum(String num) {
+        int caseNum = Integer.valueOf(num);
+        switch (caseNum) {
+            case 1: return "Januray";
+            case 2: return "February";
+            case 3: return "March";
+            case 4: return "April";
+            case 5: return "May";
+            case 6: return "June";
+            case 7: return "July";
+            case 8: return "August";
+            case 9: return "September";
+            case 10: return "October";
+            case 11: return "November";
+            case 12: return "December";
+            default: return "Unknown month";
+        }
+    }
     public String getEventTitle() {
         return title;
     }

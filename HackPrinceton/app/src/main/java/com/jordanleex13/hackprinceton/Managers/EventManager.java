@@ -11,9 +11,8 @@ import java.util.ArrayList;
 public class EventManager {
 
     private static ArrayList<Event> eventArrayList = new ArrayList<>();
-    //private static String searchTerm;
 
-
+    // Prevent instantiation of class
     private EventManager() {
 
     }

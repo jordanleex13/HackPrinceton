@@ -16,11 +16,19 @@ import java.util.HashMap;
  * Created by Jordan on 2016-11-12.
  */
 
+/**
+ * AsyncTask to fill out the Google Map with markers of different events
+ */
 public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
 
     private GoogleMap mMap;
     private HashMap<Marker, String> mHashMap;
 
+    /**
+     *
+     * @param map           the google map
+     * @param hashMap       a hashmap to relate an event marker with its corresponding url
+     */
     public FillMapWithMarkersTask(GoogleMap map, HashMap<Marker, String> hashMap) {
         mMap = map;
         mHashMap = hashMap;
@@ -30,15 +38,22 @@ public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
     protected Object doInBackground(Object[] params) {
 
         Log.e("FillMapTask", "Creating " + EventManager.getSize() + " markers");
+
+        // Take arraylist of events and create a marker
         for (int i = 0; i < EventManager.getSize(); i++) {
 
             Event currEvent = EventManager.getEvent(i);
-            float[] coor = currEvent.getCoordinates();
 
+            // Coordinates
+            float[] coor = currEvent.getCoordinates();
             LatLng latlng = new LatLng(coor[0], coor[1]);
+
+            // Other info
             String title = currEvent.getEventTitle();
             String dateTimeLocal = currEvent.getDatetime_local();
             String url = currEvent.getUrl();
+
+            Log.d("FillMapTask", title);
 
             publishProgress(latlng, title, dateTimeLocal, url);
 

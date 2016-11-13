@@ -3,6 +3,7 @@ package com.jordanleex13.hackprinceton;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,16 +57,27 @@ public class ActivityMaps extends FragmentActivity implements OnMapReadyCallback
 
         LatLng princeton = new LatLng(40.3440, -74.6514);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(princeton, 10.0f));
-
         mMap.clear();
 
         mMap.setOnInfoWindowClickListener(this);
 
-        new FillMapWithMarkersTask(mMap, markerHashMap).execute();
+        // Fills map with markers of events after a slight delay
+        CountDownTimer cd = new CountDownTimer(1000, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                new FillMapWithMarkersTask(mMap, markerHashMap).execute();
+            }
+        }.start();
+
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
         super.onStop();
         mMap.clear();
         EventManager.clearList();

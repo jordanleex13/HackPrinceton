@@ -104,11 +104,7 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
      */
     private GoogleApiClient client2;
 
-
     private String[] searchQueries = new String[4];
-
-    private boolean enableLaunchMaps = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,17 +160,17 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
             mTextView.append("Error encountered. Exception is: " + e.toString());
         }
 
-        String faceSubscriptionKey = getString(R.string.faceSubscription_key);
-        if (faceSubscriptionKey.equalsIgnoreCase("Please_add_the_face_subscription_key_here")) {
-            mTextView.append("\n\nThere is no face subscription key in res/values/strings.xml. Skip the sample for detecting emotions using face rectangles\n");
-        } else {
-            // Do emotion detection using face rectangles provided by Face API.
-            try {
-                new doRequest(true).execute();
-            } catch (Exception e) {
-                mTextView.append("Error encountered. Exception is: " + e.toString());
-            }
-        }
+//        String faceSubscriptionKey = getString(R.string.faceSubscription_key);
+//        if (faceSubscriptionKey.equalsIgnoreCase("Please_add_the_face_subscription_key_here")) {
+//            mTextView.append("\n\nThere is no face subscription key in res/values/strings.xml. Skip the sample for detecting emotions using face rectangles\n");
+//        } else {
+//            // Do emotion detection using face rectangles provided by Face API.
+//            try {
+//                new doRequest(true).execute();
+//            } catch (Exception e) {
+//                mTextView.append("Error encountered. Exception is: " + e.toString());
+//            }
+//        }
     }
 
     // Called when the "Select Image" button is clicked.
@@ -412,9 +408,9 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
             // Display based on error existence
 
             if (this.useFaceRectangles == false) {
-                mTextView.append("\n\nRecognizing emotions with auto-detected face rectangles...\n");
+                //mTextView.append("\n\nRecognizing emotions with auto-detected face rectangles...\n");
             } else {
-                mTextView.append("\n\nRecognizing emotions with existing face rectangles from Face API...\n");
+                //mTextView.append("\n\nRecognizing emotions with existing face rectangles from Face API...\n");
             }
             if (e != null) {
                 mTextView.setText("Error: " + e.getMessage());
@@ -433,6 +429,7 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
                     paint.setStrokeWidth(5);
                     paint.setColor(Color.RED);
 
+                    double[] scoreArr = new double[8];
                     for (RecognizeResult r : result) {
                         mTextView.append(String.format("\nFace #%1$d \n", count));
                         mTextView.append(String.format("\t anger: %1$.5f\n", r.scores.anger));
@@ -444,11 +441,15 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
                         mTextView.append(String.format("\t sadness: %1$.5f\n", r.scores.sadness));
                         mTextView.append(String.format("\t surprise: %1$.5f\n", r.scores.surprise));
                         mTextView.append(String.format("\t face rectangle: %d, %d, %d, %d", r.faceRectangle.left, r.faceRectangle.top, r.faceRectangle.width, r.faceRectangle.height));
-                        // detect which one is the greatest
-                        // based on the greatest, run queries through the seatgeek api
-                        // return selections onto the map.
 
-
+                        scoreArr[0] = r.scores.anger;
+                        scoreArr[1] = r.scores.contempt;
+                        scoreArr[2] = r.scores.disgust;
+                        scoreArr[3] = r.scores.fear;
+                        scoreArr[4] = r.scores.happiness;
+                        scoreArr[5] = r.scores.neutral;
+                        scoreArr[6] = r.scores.sadness;
+                        scoreArr[7] = r.scores.surprise;
 
                         faceCanvas.drawRect(r.faceRectangle.left,
                                 r.faceRectangle.top,
@@ -458,9 +459,9 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
                         count++;
                     }
 
+
                     double[][] inputMood = new double[1][8];
                     for (RecognizeResult r : result){
-                        inputMood = null;
                         inputMood = new double[][]{{
                                 r.scores.anger,
                                 r.scores.contempt,
@@ -472,21 +473,31 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
                                 r.scores.surprise
                         }};
                     }
+
+
                     // get mood with machine learning
                     double[] mood = Neural_Network.getMood(inputMood);
 
+                    // First: sports
+                    // Second: calm
+                    // Third: excited
+                    // Fourth: popular
                     for (int i = 0; i < mood.length;i++) {
-                        System.out.println(mood[i]);
+                        Log.e(TAG, String.valueOf(mood[i]));
                     }
 
                     // current want decided by emotions
                     EmotionalWant ew = new EmotionalWant(mood[0],mood[1],mood[2],mood[3]);
 
-                    // list of queries to search.
-                    searchQueries = ew.getWant();
+                    String emotion = getEmotion(scoreArr);
 
+                    // list of queries to search.
+                    searchQueries = ew.getSearchTerms();
+
+                    mTextView.append("You are " + emotion + ". Event recommendation: \n");
                     for (int i = 0; i < searchQueries.length;i++) {
                         System.out.println("Search Query " + i + " : " + searchQueries[i]);
+                        mTextView.append("\t " + searchQueries[i] );
                     }
 
                     ImageView imageView = (ImageView) findViewById(R.id.selectedImage);
@@ -501,4 +512,33 @@ public class RecognizeActivity extends ActionBarActivity implements View.OnClick
             mButtonLaunchMaps.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         }
     }
+
+
+
+    public String getEmotion(double[] arr) {
+
+        double max = arr[0];
+        int indexOfMax = 0;
+        for (int i = 0; i < arr.length; i++ ) {
+            if (arr[i] > max) {
+                max = arr[i];
+                indexOfMax = i;
+            }
+        }
+
+        switch(indexOfMax) {
+            case 0: return "angry";
+            case 1: return "contemptuous";
+            case 2: return "disgusted";
+            case 3: return "afraid";
+            case 4: return "happy";
+            case 5: return "neutral";
+            case 6: return "sad";
+            case 7: return "surprised";
+            default:
+                return "neutral";
+        }
+    }
+
 }
+

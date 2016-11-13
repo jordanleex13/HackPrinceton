@@ -18,50 +18,55 @@ public class EmotionalWant {
         popularity = popularity_;
     }
 
-    public String[] getWant(){
-
-
-        if(sports>0.5 &&
-                exciting>0.5)
-        {
-            String[] returnvalues = {"sports"};
-            return (returnvalues);
-        }
-
-        else if(
-                calm> 0.5 &&
-                        popularity>0.5){
-            String[] returnvalues = {"classical", "theatre"};
-            return (returnvalues);
-        }
-        else if(
-                exciting>0.5 &&
-                        popularity>0.5){
+    public String[] getSearchTerms(){
+        if(exciting>0.5 && popularity>0.5){
             String[] returnvalues = {"concert"};
             return (returnvalues);
         }
-
         else if(calm> 0.5){
-            String[] returnvalues = {"theatre"};
+            String[] returnvalues = {"theater"};
             return (returnvalues);
+        }
+        else if(sports>0.5 && exciting>0.5) {
+            String[] returnvalues = {"sports"};
+            return (returnvalues);
+        }
+        else if (calm> 0.5 && popularity>0.5){
+            String[] returnvalues = {"classical", "theater"};
+            return (returnvalues);
+        }
+        else if(sports > 0.5 && calm > 0.5){
+            String[] returnvalues = {"golf"};
+            return returnvalues;
         }
 
         else if(exciting> 0.5){
             String[] returnvalues = {"concert","sports"};
             return (returnvalues);
         }
-
         else if(sports> 0.5){
             String[] returnvalues = {"sports"};
             return (returnvalues);
         }
-
         else if(popularity> 0.5){
             String[] returnvalues = {"sports", "concert"};
             return (returnvalues);
         }
-        else{
-            String[] returnvalues = {"sports","theatre","classical","concert"};
+        // last chance case
+        else if(sports > calm && sports > exciting && sports > popularity){
+            String[] returnvalues = {"sports"};
+            return (returnvalues);
+        }
+        else if(calm > sports && calm > exciting && calm > popularity){
+            String[] returnvalues = {"sports"};
+            return (returnvalues);
+        }
+        else if(exciting > calm && exciting > sports && exciting > popularity){
+            String[] returnvalues = {"exciting"};
+            return (returnvalues);
+        }
+        else {
+            String[] returnvalues = {"sports","theater","classical","concert"};
             return (returnvalues);
         }
     }
