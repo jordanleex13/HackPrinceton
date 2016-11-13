@@ -21,7 +21,6 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
         mButton.setOnClickListener(this);
 
         new Thread(new RunnableParseJson("HellO")).start();
-
     }
 
     @Override

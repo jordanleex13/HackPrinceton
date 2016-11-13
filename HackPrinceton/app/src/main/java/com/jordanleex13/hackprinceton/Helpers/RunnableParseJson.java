@@ -31,6 +31,7 @@ public class RunnableParseJson implements Runnable {
     public RunnableParseJson(String query) {
         mQuery = query;
     }
+    
     @Override
     public void run() {
 
@@ -41,7 +42,6 @@ public class RunnableParseJson implements Runnable {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     public void httpGet(String searchTerm) throws IOException, JSONException {
@@ -108,9 +108,9 @@ public class RunnableParseJson implements Runnable {
 
                 }
             }
-
-
+            
             out.close();
+            
         } else{
             //Closes the connection.
             response.getEntity().getContent().close();

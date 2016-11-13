@@ -88,6 +88,7 @@ public class Utils {
                 if (buf.length()>0) buf.deleteCharAt(buf.length()-1);
                 return buf.toString();
             }
+            
         } catch (Exception ex) { } // for now eat exceptions
         return "";
         /*try {
@@ -130,5 +131,4 @@ public class Utils {
 
         return "";
     }
-
 }
