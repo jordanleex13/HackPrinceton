@@ -25,7 +25,7 @@ public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
     private HashMap<Marker, String> mHashMap;
 
     /**
-     *
+     * Constructor for async task
      * @param map           the google map
      * @param hashMap       a hashmap to relate an event marker with its corresponding url
      */
@@ -56,7 +56,13 @@ public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
             Log.d("FillMapTask", title);
 
             publishProgress(latlng, title, dateTimeLocal, url);
-
+            // Optimization to display all markers
+            try {
+                Log.d("FillMapTask", "sleeping thread");
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -68,10 +74,9 @@ public class FillMapWithMarkersTask extends AsyncTask<Object, Object, Object> {
         LatLng curr = (LatLng) values[0];
         String title = (String) values[1];
         String dateTimeLocal = (String) values[2];
-
-        //String rating = "Rating : " + score;
         String url = (String) values[3];
 
+        // Add marker to map
         Marker temp = mMap.addMarker(new MarkerOptions().position(curr).title(title).snippet(dateTimeLocal));
         Log.e("FillMapTask", "Inserting marker");
         mHashMap.put(temp, url);

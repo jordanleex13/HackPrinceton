@@ -7,7 +7,7 @@
         android:id="@+id/activity_recognize_prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
+        android:padding="@dimen/small_margin"
         android:layout_centerHorizontal="true"
         android:text="Take a pic. Find an event today!"
         android:textSize="@dimen/medium_text"
@@ -21,26 +21,37 @@
         android:background="#000000"
         android:layout_below="@id/activity_recognize_prompt"/>
 
-
-    <ScrollView
-        android:orientation="horizontal"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
+        android:orientation="vertical"
         android:layout_below="@id/selectedImage"
-        android:layout_above="@+id/activity_recognize_buttons">
+        android:layout_margin="@dimen/small_margin">
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="textMultiLine"
-            android:ems="10"
             android:id="@+id/textViewResult"
-            android:layout_weight="1" />
-    </ScrollView>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/medium_text"
+            android:fontFamily="sans-serif-light"
+            />
+
+        <TextView
+            android:id="@+id/activity_recognize_recommendation"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/medium_text"
+            android:fontFamily="sans-serif-light"
+            />
+    </LinearLayout>
+
 
 
     <LinearLayout
-        android:id="@id/activity_recognize_buttons"
+        android:id="@+id/activity_recognize_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -58,6 +69,11 @@
             android:fontFamily="sans-serif-light"
             style="@android:style/ButtonBar" />
 
+        <android.support.v4.widget.Space
+            android:layout_width="3dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:backgroundTint="@color/colorAccent"/>
         <Button
             android:id="@+id/buttonLaunchMaps"
             android:layout_width="0dp"
